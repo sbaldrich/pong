@@ -15,6 +15,8 @@ function love.load()
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
+    math.randomseed(os.time())
+
     -- This is a more "retro-looking" font that can be used ...
     smallFont = love.graphics.newFont('font.ttf', 8)
 
@@ -34,6 +36,17 @@ function love.load()
 
     player1Y = 30
     player2Y = VIRTUAL_HEIGHT - 50
+
+    -- Position the ball in the middle of the screen initially
+    ballX = VIRTUAL_WIDTH / 2 - 2
+    ballY = VIRTUAL_HEIGHT / 2 - 2
+
+    -- Randomize the ball's initial direction
+    ballDX = math.random(2) == 1 and 100 or -100
+    ballDY = math.random(-30, 30)
+
+    -- State variable to handle the transitions between the games's possible states.
+    gameState = 'start'
 end
 
 --[[
@@ -42,6 +55,18 @@ end
 function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
+    elseif key == 'enter' or key == 'return' then
+        if gameState == 'start' then
+            gameState = 'play'
+        else 
+            gameState = 'start'
+            -- Set the ball to the middle of the screen
+            ballX = VIRTUAL_WIDTH / 2 - 2
+            ballY = VIRTUAL_HEIGHT / 2 - 2
+                -- Randomize the ball's initial direction
+            ballDX = math.random(2) == 1 and 200 or -200
+            ballDY = math.random(-90, 90)
+        end
     end
 end
 
@@ -73,7 +98,7 @@ function love.draw()
     love.graphics.rectangle('fill', VIRTUAL_WIDTH - 10, player2Y, 5, 20);
 
     -- ball
-    love.graphics.rectangle('fill', VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4);
+    love.graphics.rectangle('fill', ballX, ballY, 4, 4);
 
     -- end rendering at virtual resolution
     push:apply('end')
@@ -86,16 +111,20 @@ end
 function love.update(dt)
     if love.keyboard.isDown('w') then
         -- No syntactic sugar for adding and assigning at the same time
-        player1Y = player1Y - PADDLE_SPEED * dt
+        player1Y = math.max(0, player1Y - PADDLE_SPEED * dt)
     elseif love.keyboard.isDown('s') then
-        player1Y = player1Y + PADDLE_SPEED * dt
+        player1Y = math.min(VIRTUAL_HEIGHT - 20, player1Y + PADDLE_SPEED * dt)
     end
 
     if love.keyboard.isDown('up') then
         -- No syntactic sugar for adding and assigning at the same time
-        player2Y = player2Y - PADDLE_SPEED * dt
+        player2Y = math.max(0, player2Y - PADDLE_SPEED * dt)
     elseif love.keyboard.isDown('down') then
-        player2Y = player2Y + PADDLE_SPEED * dt
+        player2Y = math.min(VIRTUAL_HEIGHT - 20, player2Y + PADDLE_SPEED * dt)
     end
 
+    if gameState == 'play' then
+        ballX = ballX + ballDX * dt
+        ballY = ballY + ballDY * dt
+    end
 end
