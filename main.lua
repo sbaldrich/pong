@@ -137,7 +137,21 @@ function love.update(dt)
             ball.y = VIRTUAL_HEIGHT
             ball.dy = -ball.dy
         end
+
+        if ball.x > VIRTUAL_WIDTH then
+            player1Score = player1Score + 1
+            gameState = "start"
+            ball:reset()
+        end
+
+        if ball.x < 0 then
+            player2Score = player2Score + 1
+            gameState = "start"
+            ball:reset()
+        end
     end
+
+    
     
     if love.keyboard.isDown('w') then
         player1.dy = -PADDLE_SPEED
