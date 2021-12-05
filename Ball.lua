@@ -1,6 +1,6 @@
 Ball = Class {}
 
-INITIAL_SPEED_X = 300
+INITIAL_SPEED_X = 200
 INITIAL_SPEED_Y = 100
 
 function Ball:init(x, y, width, height)
