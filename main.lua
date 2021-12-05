@@ -120,6 +120,7 @@ function love.draw()
     ball:render()
 
     displayFPS()
+    displayBallSpeed()
 
     -- end rendering at virtual resolution
     push:apply('end')
@@ -134,6 +135,7 @@ function love.update(dt)
         if ball:collides(player1) then
             ball.x = player1.x + 5
             ball.dx = -ball.dx * 1.10
+            ball.dx = math.min(ball.dx, 600)
 
             if ball.dy < 0 then
                 ball.dy = -math.random(10, 150)
@@ -146,7 +148,7 @@ function love.update(dt)
         if ball:collides(player2) then
             ball.x = player2.x - ball.width
             ball.dx = -ball.dx * 1.10
-
+            ball.dx = math.max(ball.dx, -600)
             if ball.dy < 0 then
                 ball.dy = -math.random(10, 150)
             else
@@ -236,4 +238,14 @@ function displayScore()
     love.graphics.setFont(scoreFont)
     love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
     love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
+end
+
+--[[
+    Renders the current Ball speed.
+]]
+function displayBallSpeed()
+    -- simple FPS display across all states
+    love.graphics.setFont(smallFont)
+    love.graphics.setColor(0, 255 / 255, 0, 255 / 255)
+    love.graphics.print('Ball speed: ' .. tostring(ball.dx), 15, VIRTUAL_HEIGHT - 10)
 end
