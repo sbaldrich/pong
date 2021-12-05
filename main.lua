@@ -20,7 +20,7 @@ PADDLE_SPEED = 200
 function love.load()
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
-
+    love.window.setTitle('Pong')
     math.randomseed(os.time())
 
     -- Initialize fonts
@@ -247,5 +247,5 @@ function displayBallSpeed()
     -- simple FPS display across all states
     love.graphics.setFont(smallFont)
     love.graphics.setColor(0, 255 / 255, 0, 255 / 255)
-    love.graphics.print('Ball speed: ' .. tostring(ball.dx), 15, VIRTUAL_HEIGHT - 10)
+    love.graphics.print('Ball speed: ' .. tostring(ball.dx), 10, VIRTUAL_HEIGHT - 10)
 end
