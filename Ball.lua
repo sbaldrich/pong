@@ -1,7 +1,7 @@
 Ball = Class {}
 
-INITIAL_SPEED_X = 100
-INITIAL_SPEED_Y = 90
+INITIAL_SPEED_X = 300
+INITIAL_SPEED_Y = 100
 
 function Ball:init(x, y, width, height)
     self.x = x
@@ -13,11 +13,12 @@ function Ball:init(x, y, width, height)
     self.dy = math.random(-INITIAL_SPEED_Y, INITIAL_SPEED_Y)
 end
 
-function Ball:reset()
+function Ball:reset(sign)
     self.x = VIRTUAL_WIDTH / 2 - self.width
     self.y = VIRTUAL_HEIGHT / 2 - self.height
-
-    self.dx = math.random(2) == 1 and INITIAL_SPEED_X or -INITIAL_SPEED_X
+    sign = sign or math.random(-1,0)
+    sign = sign > 0 and 1 or -1
+    self.dx = sign * INITIAL_SPEED_X
     self.dy = math.random(-INITIAL_SPEED_Y, INITIAL_SPEED_Y)
 end
 
