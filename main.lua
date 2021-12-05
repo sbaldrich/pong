@@ -16,6 +16,11 @@ VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
 PADDLE_SPEED = 200
+PADDLE_HEIGHT = 25
+SPEED_DELTA_RATE = 1.1
+MAX_SPEED_DELTA = 600
+MAX_DELTA_Y = 250
+BALL_SIDE = 3
 
 function love.load()
 
@@ -45,10 +50,10 @@ function love.load()
     player1Score = 0
     player2Score = 0
 
-    player1 = Paddle(10, 30, 5, 20)
-    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
+    player1 = Paddle(10, 30, 5, PADDLE_HEIGHT)
+    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, PADDLE_HEIGHT)
 
-    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
+    ball = Ball(VIRTUAL_WIDTH / 2 - BALL_SIDE / 2, VIRTUAL_HEIGHT / 2 - BALL_SIDE / 2, BALL_SIDE, BALL_SIDE)
     -- State variable to handle the transitions between the games's possible states.
     gameState = 'start'
     servingPlayer = math.random(2)
@@ -61,7 +66,6 @@ end
 function love.resize(w, h)
     push:resize(w, h)
 end
-
 
 --[[
     Having to click the x to quit is a drag. Let the player use the ESC key for that
@@ -86,7 +90,7 @@ end
 
 --[[
     Called by LÖVE2D on every frame to redraw the screen.
-    ]]
+]]
 function love.draw()
     -- start rendering at virtual resolution
     push:apply('start')
@@ -134,37 +138,29 @@ function love.update(dt)
     if gameState == 'play' then
         if ball:collides(player1) then
             ball.x = player1.x + 5
-            ball.dx = -ball.dx * 1.10
-            ball.dx = math.min(ball.dx, 600)
+            ball.dx = -ball.dx * SPEED_DELTA_RATE
+            ball.dx = math.min(ball.dx, MAX_SPEED_DELTA)
 
-            if ball.dy < 0 then
-                ball.dy = -math.random(10, 150)
-            else
-                ball.dy = math.random(10, 150)
-            end
+            -- Keep the same vertical direction when
+            -- colliding with a paddle
+            ball.dy = (ball.dy < 0 and -1 or 1) * math.random(10, MAX_DELTA_Y)
             sounds['paddle_hit']:play()
         end
 
         if ball:collides(player2) then
             ball.x = player2.x - ball.width
-            ball.dx = -ball.dx * 1.10
-            ball.dx = math.max(ball.dx, -600)
-            if ball.dy < 0 then
-                ball.dy = -math.random(10, 150)
-            else
-                ball.dy = math.random(10, 150)
-            end
+            ball.dx = -ball.dx * SPEED_DELTA_RATE
+            ball.dx = math.max(ball.dx, -MAX_SPEED_DELTA)
+
+            -- Keep the same vertical direction when
+            -- colliding with a paddle
+            ball.dy = (ball.dy < 0 and -1 or 1) * math.random(10, MAX_DELTA_Y)
             sounds['paddle_hit']:play()
         end
 
-        if ball.y <= 0 then
-            ball.y = 0
-            ball.dy = -ball.dy
-            sounds['wall_hit']:play()
-        end
-
-        if ball.y >= VIRTUAL_HEIGHT then
-            ball.y = VIRTUAL_HEIGHT
+        -- Handle collision with upper or lower bounds
+        if ball.y <= 0 or ball.y >= VIRTUAL_HEIGHT then
+            ball.y = ball.y <= 0 and 0 or VIRTUAL_HEIGHT
             ball.dy = -ball.dy
             sounds['wall_hit']:play()
         end
