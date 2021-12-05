@@ -38,7 +38,7 @@ function love.load()
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
-        resizable = false,
+        resizable = true,
         vsync = true
     })
 
@@ -53,6 +53,15 @@ function love.load()
     gameState = 'start'
     servingPlayer = math.random(2)
 end
+
+--[[
+    Called by LÖVE whenever we resize the screen; here, we just want to pass in the
+    width and height to push so our virtual resolution can be resized as needed.
+]]
+function love.resize(w, h)
+    push:resize(w, h)
+end
+
 
 --[[
     Having to click the x to quit is a drag. Let the player use the ESC key for that
