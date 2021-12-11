@@ -14,12 +14,15 @@ function Ball:init(x, y, width, height)
 end
 
 function Ball:reset(sign)
-    self.x = VIRTUAL_WIDTH / 2 - self.width
-    self.y = VIRTUAL_HEIGHT / 2 - self.height
+    self.x = VIRTUAL_WIDTH / 2 - BALL_SIDE
+    self.y = VIRTUAL_HEIGHT / 2 - BALL_SIDE
     sign = sign or math.random(-1,0)
     sign = sign > 0 and 1 or -1
     self.dx = sign * INITIAL_SPEED_X
     self.dy = math.random(-INITIAL_SPEED_Y, INITIAL_SPEED_Y)
+
+    -- ball = Ball(VIRTUAL_WIDTH / 2 - BALL_SIDE / 2, VIRTUAL_HEIGHT / 2 - BALL_SIDE / 2, BALL_SIDE, BALL_SIDE)
+
 end
 
 --[[
